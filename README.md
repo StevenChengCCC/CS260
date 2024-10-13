@@ -31,3 +31,6 @@ nnnnnnn
   **DB/Login** - DB/Login is used to handle logins and Signup.  
   **WebSocket** - Websockets is used to record user data and leaderboards.  
 >>>>>>> 95748614af1fff73906f5d573f4421d4cceb48c6
+
+1. add a file named index.html 
+2. clone simon
