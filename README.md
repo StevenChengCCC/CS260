@@ -32,5 +32,14 @@ nnnnnnn
   **WebSocket** - Websockets is used to record user data and leaderboards.  
 >>>>>>> 95748614af1fff73906f5d573f4421d4cceb48c6
 
+# MY HTML START UP WROK DESCRIPTION
 1. add a file named index.html 
-2. clone simon
+2. create a header a title on top. create space for the login in and sign up function. have some plain text for the front page
+3. Create a login.html page, and created quiz.html page. create inpust section for login in and sign up and a submit button in login.html
+4. create a button for quiz.html, Try to create some question for quiz.html
+5. clone simon
+# MY CSS START UP WROK DESCRIPTION
+1. create a file named index.css
+2. create the style of different heading and <p>
+3. create Responsive Design for the webstie
+4. clone simon
