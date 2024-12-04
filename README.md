@@ -1,13 +1,5 @@
 <<<<<<< HEAD
 # CS260
-ca
-dfasdfas
-huiiuihvjkk
-njjnjn
-
-jnnjnjnkn
-
-nnnnnnn
 =======
 <span style="color: blue;">CS260 web design project</span>
 
@@ -30,16 +22,48 @@ nnnnnnn
   **Service** - chatWithFriend and saveScores also provide users with access to the data they have recorded in leaderboards.  
   **DB/Login** - DB/Login is used to handle logins and Signup.  
   **WebSocket** - Websockets is used to record user data and leaderboards.  
->>>>>>> 95748614af1fff73906f5d573f4421d4cceb48c6
 
-# MY HTML START UP WROK DESCRIPTION
+# MY HTML START UP WROK DESCRIPTION setps
 1. add a file named index.html 
 2. create a header a title on top. create space for the login in and sign up function. have some plain text for the front page
 3. Create a login.html page, and created quiz.html page. create inpust section for login in and sign up and a submit button in login.html
 4. create a button for quiz.html, Try to create some question for quiz.html
 5. clone simon
+6. Make every all html page have a link to each other, and make those link look the same, so I could use router to link them later.
+7. edit the index.html make it to login in page.
+8. create about,html and make the edited Scores.html make it include blank space for database.
+9. edit quiz page add 2 example quiz questions. add intro section for all html page
+10. fix little bug of link to scores.html
+# MY HTML START UP WROK DESCRIPTION 
+1. index.html (Login/Home)
+Purpose: As a login page, users can log in or create a new account.
+Features:
+Login form: Allows users to enter their credentials to access quizzes and scoring systems.
+Creating accounts: make new user create an account.
+Navigation links: Provide easy access to other parts of the site. (this feature is shared in all site)
+Welcome Content: (going to add one)
+2. Quiz.html (Quiz page)
+Objective: To test users' understanding of online fraud and their ability to identify fraud scenarios.
+Features:
+Interactive questions: Users can select answers and submit them.
+Third-party service placeholder: A reserved place to add CAPTCHA or external scoring apis in the future.
+Responsive design: Ensure that the test layout remains user-friendly on devices of all sizes.
+3. Scores.html (score/leaderboard page)
+Purpose: Display user historical scores, rankings.
+Features:
+Leaderboard: Shows top players, top scores, and dates.
+Database data: Space reserved for integrated database.
+WebSocket data: Space reserved for WebSocket database.
+4. About.html (About the page)
+Purpose: Explain the original idea for creating this website.
+Features:
+Information Content: Provides background on why websites are created and the importance of fraud awareness.
+
 # MY CSS START UP WROK DESCRIPTION
 1. create a file named index.css
 2. create the style of different heading and <p>
 3. create Responsive Design for the webstie
 4. clone simon
+5. Delete the previous code, because the previous all by imagination is a little ugly.
+6. link index.css to html check how it looks like
+7. 
