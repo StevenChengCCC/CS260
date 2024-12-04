@@ -67,4 +67,4 @@ Information Content: Provides background on why websites are created and the imp
 5. link index.css to index.html check how it looks like
 6. Delete the previous code, because the previous all by imagination is a little ugly. (I did the css before i check the rubic of html, also I was trying to give every header or botton a color and front which make the website looks so wried)
 7. create the style of login page (index.html)
-8. 
+8. create the style of score and about page (Scores.html and about.html)
