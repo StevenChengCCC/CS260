@@ -61,9 +61,10 @@ Information Content: Provides background on why websites are created and the imp
 
 # MY CSS START UP WROK DESCRIPTION
 1. create a file named index.css
-2. create the style of different heading and <p>
+2. create the style of different heading
 3. create Responsive Design for the webstie
 4. clone simon
-5. Delete the previous code, because the previous all by imagination is a little ugly.
-6. link index.css to html check how it looks like
-7. 
+5. link index.css to index.html check how it looks like
+6. Delete the previous code, because the previous all by imagination is a little ugly. (I did the css before i check the rubic of html, also I was trying to give every header or botton a color and front which make the website looks so wried)
+7. create the style of login page (index.html)
+8. 
