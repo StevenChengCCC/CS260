@@ -69,3 +69,7 @@ Information Content: Provides background on why websites are created and the imp
 7. create the style of login page (index.html)
 8. create the style of score and about page (Scores.html and about.html)
 9. create the style for quiz page (quiz.html)
+
+# MY React START UP WROK DESCRIPTION
+1. creat app.js file and header.js file put react router in my website.
+2. clone simon
