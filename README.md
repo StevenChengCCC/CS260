@@ -79,3 +79,10 @@ Information Content: Provides background on why websites are created and the imp
 5. created index.html src/main.jsx src/app.jsx to make the main application component with routes
 6. created a footer.jsx (super easy I put the css code in there too, so that i could have style of it)
 7. created a header.jsx I put the routes in there to make it like a navbar. Also add the css code to it
+8. deploy simon to my website
+9. read simon again and again
+10. I spent a long time figure out that i had problem create the header and foot.
+11. create a new Project Structure /pages/About, Login, Quiz, Score(.css/.jsx)+App.jsx/.css (replace header and footer)
+12. put react router function in the project, and create username in app.jsx to make the login function work (did not finshed)
+13. create more scam question, create function caculate score
+14. edited the app.jsx and score.jsx
