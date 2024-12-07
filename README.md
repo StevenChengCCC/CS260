@@ -69,7 +69,13 @@ Information Content: Provides background on why websites are created and the imp
 7. create the style of login page (index.html)
 8. create the style of score and about page (Scores.html and about.html)
 9. create the style for quiz page (quiz.html)
+10. centered the picture
 
 # MY React START UP WROK DESCRIPTION
 1. creat app.js file and header.js file put react router in my website.
 2. clone simon
+3. use these commond "npm init -y","npm install vite@latest -D","npm install bootstrap react-bootstrap","npm install react react-dom react-router-dom","npm run dev" to start convet my html startup frontend to use Reac
+4. created the file architecture after using vite-react
+5. created index.html src/main.jsx src/app.jsx to make the main application component with routes
+6. created a footer.jsx (super easy I put the css code in there too, so that i could have style of it)
+7. created a header.jsx I put the routes in there to make it like a navbar. Also add the css code to it
