@@ -4,7 +4,7 @@ import Login from './pages/Login.jsx'
 import Quiz from './pages/Quiz.jsx'
 import Score from './pages/Score.jsx'
 import About from './pages/About.jsx'
-import './App.css' 
+import './app.css' 
 
 function App() {
   const [username, setUsername] = useState('')
@@ -31,6 +31,7 @@ function App() {
           <Route path="/quiz" element={<Quiz username={username} score={score} setScore={setScore} />} />
           <Route path="/score" element={<Score username={username} score={score} />} />
           <Route path="/about" element={<About />} />
+          <Route path="/*"  element={<NotFound />} />
         </Routes>
       </main>
 
@@ -41,5 +42,8 @@ function App() {
     </BrowserRouter>
   )
 }
+function NotFound() {
+  return <main className='container-fluid bg-secondary text-center'>404: Return to sender. Address unknown.</main>;
+}
 
-export default App
+export default App;

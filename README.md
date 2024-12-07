@@ -87,3 +87,10 @@ Information Content: Provides background on why websites are created and the imp
 13. create more scam question, create function caculate score
 14. edited the app.jsx and score.jsx
 15. create login in page
+16. Copy the css code from my CSS startup
+17. edit the css code
+18. I could see anything when I run dev
+19. create a normal app.jsx only print hello world
+20. removed extra render inindex.jsx
+21. found the problem on index.html, forget line <script type="module" src="/index.jsx"></script> in index.html
+22. found error in css and quiz going to fix it.
