@@ -73,8 +73,20 @@ function Quiz({ username, score, setScore }) {
   return (
     <section id="quiz-questions">
       <p>Current Score: {score}</p>
+      <h2>Anti-Scam Awareness Quiz</h2>
+      <p>Logged in as: {username}</p>
+      <h3>Question {currentQuestion + 1}: {q.question}</h3>
+      <ul>
+        {q.options.map((opt, idx) => (
+          <li key={idx}>
+            <button onClick={() => handleAnswer(idx)}>{opt}</button>
+          </li>
+        ))}
+      </ul>
+
     </section>
   )
+  
 }
 
 export default Quiz

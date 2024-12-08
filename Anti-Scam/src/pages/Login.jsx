@@ -46,7 +46,7 @@ function Login({ username, password, setUsername, setPassword }) {
       <section id="welcome-section">
         <h2>Welcome!</h2>
         <p>Once you log in, you will be able to take a quiz to test your anti-fraud awareness, see your scores, and learn more about how to avoid scams.</p>
-        <img src="placeholder-image.jpg" alt="Welcome Image" />
+        <img src="" alt="Welcome Image" />
       </section>
     </section>
   )
