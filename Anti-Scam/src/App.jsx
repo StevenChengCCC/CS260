@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx'
 import Quiz from './pages/Quiz.jsx'
 import Score from './pages/Score.jsx'
 import About from './pages/About.jsx'
+
 import './app.css' 
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
       </main>
 
       <footer>
-        <p>2024 Anti-Scam Awareness</p>
+        <p>© 2024 Anti-Scam Awareness</p>
         <p><a href="https://github.com/StevenChengCCC/CS260">Our GitHub Repository</a></p>
       </footer>
     </BrowserRouter>

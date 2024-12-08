@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import './quiz.css'
+import '../app.css'
 
 function Quiz({ username, score, setScore }) {
   const [currentQuestion, setCurrentQuestion] = useState(0)

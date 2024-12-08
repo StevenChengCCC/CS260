@@ -1,5 +1,5 @@
 import React from 'react'
-import './score.css'
+import '../app.css'
 
 function Score({ username, score }) {
   if (!username) {

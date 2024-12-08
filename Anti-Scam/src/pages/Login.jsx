@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import './login.css'
+import myImage from './logo.png'
+import '../app.css'
 
 function Login({ username, password, setUsername, setPassword }) {
   const [localUsername, setLocalUsername] = useState('')
@@ -46,7 +47,6 @@ function Login({ username, password, setUsername, setPassword }) {
       <section id="welcome-section">
         <h2>Welcome!</h2>
         <p>Once you log in, you will be able to take a quiz to test your anti-fraud awareness, see your scores, and learn more about how to avoid scams.</p>
-        <img src="" alt="Welcome Image" />
       </section>
     </section>
   )
