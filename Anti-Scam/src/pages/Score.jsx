@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../app.css';
 
 function Score({ username }) {
@@ -12,7 +12,6 @@ function Score({ username }) {
       setCurrentScore(data.currentScore);
     }
   });
-
 
   if (!username || !token) {
     return <p>Please <a href="/">login</a> to view scores.</p>;

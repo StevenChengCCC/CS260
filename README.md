@@ -113,3 +113,7 @@ Information Content: Provides background on why websites are created and the imp
 13. fix the bug i made in step 11 (I did not have a submit button when i was working on me react startup, so i chenged it back to send score after user finsh quiz, and after they finsh it will jump to score page)
 14. copied the submit current score endpoint, and make a current score function from it. change the name of submit score to score/currentscore
 15. edit score page to make it have logout and show current score function.
+
+# MY Login START UP WROK DESCRIPTION
+1. 
+2. 
