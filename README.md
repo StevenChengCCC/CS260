@@ -93,4 +93,6 @@ Information Content: Provides background on why websites are created and the imp
 19. create a normal app.jsx only print hello world
 20. removed extra render inindex.jsx
 21. found the problem on index.html, forget line <script type="module" src="/index.jsx"></script> in index.html
-22. found error in css and quiz going to fix it.
+22. edit the quiz.jsx
+23. add image to website
+24. could not figure out css footer problem.
