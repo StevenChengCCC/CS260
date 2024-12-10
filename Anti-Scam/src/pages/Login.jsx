@@ -39,25 +39,7 @@ function Login({ setUsername, setPassword }) {
     loginOrCreate('/api/auth/login', localUsername, localPassword);
   };
 
-  const handleCreateAccount = (e) => {
-    e.preventDefault();
-    fetch('/api/auth/create', {
-      method: 'POST',
-      body: JSON.stringify({ username: createUserUsername, password: createUserPassword }),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then(async (response) => {
-      if (response?.status === 200) {
-        return loginOrCreate('/api/auth/login', createUserUsername, createUserPassword);
-      } else {
-        const body = await response.json();
-        setDisplayError(`⚠ Error: ${body.msg}`);
-      }
-    });
-  };
-
+  
   if (redirect) {
     return <Navigate to="/quiz" />;
   }

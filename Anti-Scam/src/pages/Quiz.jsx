@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import '../app.css'
+import React, { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import '../app.css';
 
 function Quiz({ username, score, setScore }) {
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [quizDone, setQuizDone] = useState(false)
-
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [quizDone, setQuizDone] = useState(false);
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const token = localStorage.getItem('token');
+  
   const questions = [
     {
       question: "Which of the following is a common sign of a phishing email?",
@@ -49,30 +52,74 @@ function Quiz({ username, score, setScore }) {
     }
   ]
 
-  if (!username) {
-    return <p>Please <a href="/">login</a> first.</p>
+  // If user is did not logged in (add token to it)
+  if (!username || !token) {
+    return <p>Please <a href="/">login</a> first.</p>;
   }
-
-  const handleAnswer = (index) => {
+  function handleAnswer(index) {
     if (index === questions[currentQuestion].correct) {
-      setScore(score + 1)
+      setScore(score + 1);
     }
-    const nextQ = currentQuestion + 1
+    const nextQ = currentQuestion + 1; //get one points
     if (nextQ < questions.length) {
-      setCurrentQuestion(nextQ)
+      setCurrentQuestion(nextQ); //nextquestion
     } else {
-      setQuizDone(true)
+      // finished quiz
+      setQuizDone(true);
     }
   }
+//send score to restore in local storage
+  async function submitScore() {
+    const response = await fetch('/score/currentscore', {
+      method: 'POST',
+      body: JSON.stringify({ token, score }),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    });
+    if (response?.status === 200) {
+    } else {
+      const body = await response.json();
+      setErrorMsg(`⚠ Error submitting score: ${body.msg}`);
+    }
+  }
+//after quiz is done take user to score page
+  useEffect(() => {
+    if (quizDone) {
+      submitScore();
+    }
+  }, [quizDone]);
 
   if (quizDone) {
-    return <Navigate to="/score" />
+    return <Navigate to="/score" />;
   }
-  const q = questions[currentQuestion]
+// add a log out function
+  function handleLogout() {
+    fetch('/api/auth/logout', {
+      method: 'DELETE',
+    })
+      .catch(() => {
+      })
+      .finally(() => {
+        localStorage.removeItem('username');
+        localStorage.removeItem('token');
+        setRedirectToLogin(true);
+      });
+  }
+// if login failed take back
+  if (redirectToLogin) {
+    return <Navigate to="/" />;
+  }
 
+  const q = questions[currentQuestion];
+// add a log out function
   return (
     <section id="quiz-questions">
-      <p>Current Score: {score}</p>
+      {errorMsg && <p className="error">{errorMsg}</p>}
+      <p>
+        Current Score: {score} 
+        <button onClick={handleLogout}>Logout</button>
+      </p> 
       <h2>Anti-Scam Awareness Quiz</h2>
       <p>Logged in as: {username}</p>
       <h3>Question {currentQuestion + 1}: {q.question}</h3>
@@ -83,10 +130,8 @@ function Quiz({ username, score, setScore }) {
           </li>
         ))}
       </ul>
-
     </section>
-  )
-  
+  );
 }
 
 export default Quiz

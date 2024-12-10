@@ -43,14 +43,28 @@ apiRouter.delete('/auth/logout', (req, res) => {
   res.status(204).end();
 });
 
-apiRouter.post('/quiz/submit', (req, res) => {
-    const { token, score } = req.body;
-    const user = users[username];
-    if (score > user.score) {
-      user.score = score;
-    }
-    res.send({ msg: 'Quiz submitted', currentScore: user.score });
-  });
+apiRouter.post('/score/currentscore', (req, res) => {
+  const { token, score } = req.body;
+  const username = Object.keys(users).find(u => users[u].token === token);
+  if (!username) {
+    return res.status(401).send({ msg: 'DNE' });
+  }
+  const user = users[username];
+  if (score > user.score) {
+    user.score = score;
+  }
+  res.send({ currentScore: user.score });
+});
+
+apiRouter.get('/score/current', (req, res) => {
+  const token = req.query.token;
+  const username = Object.keys(users).find(u => users[u].token === token);
+  if (!username) {
+    return res.status(401).send({ msg: 'DNE' });
+  }
+  const user = users[username];
+  res.send({ currentScore: user.score });
+});
   
 app.use((_req, res) => {
     res.sendFile('index.html', { root: 'public' });

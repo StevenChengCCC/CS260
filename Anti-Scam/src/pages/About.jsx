@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import myImage from './logo.png'
 import '../app.css'
 
 function About() {
-  const [quote, setQuote] = useState('');
+  const [quote, setQuote] = React.useState('');
 
-  useEffect(() => {
-    async function fetchQuote() {
-      try {
-        const response = await fetch('https://perl.is/random');
-        const data = await response.json();
-        setQuote(data.quote);
-      } catch (error) {
-        console.error("Failed to fetch quote:", error);
-        setQuote("Failed to load quote.");
-      }
+  React.useEffect(() => {
+    function fetchQuote() {
+      fetch('https://perl.is/random')
+        .then(response => response.json())
+        .then(data => setQuote(data.quote))
+        .catch(() => {
+        });
     }
     fetchQuote();
   }, []);
-  return (
+
+  return(
     <section>
       <h2>About Anti-Scam Awareness</h2>
       <p>The original intention of this website is to help users recognize and avoid common online scams. Through interactive quizzes and educational resources, we aim to raise awareness about fraudulent schemes and empower individuals to protect themselves.</p>
