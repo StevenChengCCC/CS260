@@ -9,7 +9,7 @@ const port = process.argv.length > 2 ? process.argv[2] : 4000;
 app.use(express.json());
 app.use(express.static('public'));
 
-const apiRouter = express.Router();
+var apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 apiRouter.post('/auth/create', (req, res) => {
@@ -43,11 +43,19 @@ apiRouter.delete('/auth/logout', (req, res) => {
   res.status(204).end();
 });
 
-
+apiRouter.post('/quiz/submit', (req, res) => {
+    const { token, score } = req.body;
+    const user = users[username];
+    if (score > user.score) {
+      user.score = score;
+    }
+    res.send({ msg: 'Quiz submitted', currentScore: user.score });
+  });
+  
 app.use((_req, res) => {
     res.sendFile('index.html', { root: 'public' });
   });
   
-  app.listen(port, () => {
+app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
