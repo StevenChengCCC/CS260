@@ -29,7 +29,7 @@ apiRouter.post('/auth/login', (req, res) => {
   const user = users[username];
 
   if (!user || user.password !== password) {
-    return res.status(401).send({ msg: 'Incorrect Password' });
+    return res.status(401).send({ msg: 'Username or password is incorrect' });
   }
   user.token = uuid.v4();
   res.send({ token: user.token });

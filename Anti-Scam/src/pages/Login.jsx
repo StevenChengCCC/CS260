@@ -1,35 +1,71 @@
-import React, { useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import '../app.css'
+import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import '../app.css';
 
-function Login({ username, password, setUsername, setPassword }) {
-  const [localUsername, setLocalUsername] = useState('')
-  const [localPassword, setLocalPassword] = useState('')
-  const [createUserUsername, setCreateUserUsername] = useState('')
-  const [createUserPassword, setCreateUserPassword] = useState('')
-  const [redirect, setRedirect] = useState(false)
+function Login({ setUsername, setPassword }) {
+  const [localUsername, setLocalUsername] = useState('');
+  const [localPassword, setLocalPassword] = useState('');
+  const [createUserUsername, setCreateUserUsername] = useState('');
+  const [createUserPassword, setCreateUserPassword] = useState('');
+  const [redirect, setRedirect] = useState(false);
+  const [displayError, setDisplayError] = useState('');
+
+  async function loginOrCreate(endpoint, username, password) {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    });
+
+    if (response?.status === 200) {
+      const data = await response.json();
+      const token = data.token;
+      localStorage.setItem('username', username);
+      localStorage.setItem('token', token);
+
+      setUsername(username);
+      setPassword(password);
+      setRedirect(true);
+    } else {
+      const body = await response.json();
+      setDisplayError(`⚠ Error: ${body.msg}`);
+    }
+  }
 
   const handleLogin = (e) => {
-    e.preventDefault()
-    setUsername(localUsername)
-    setPassword(localPassword)
-    setRedirect(true)
-  }
+    e.preventDefault();
+    loginOrCreate('/api/auth/login', localUsername, localPassword);
+  };
 
   const handleCreateAccount = (e) => {
-    e.preventDefault()
-    setUsername(createUserUsername)
-    setPassword(createUserPassword)
-    setRedirect(true)
-  }
+    e.preventDefault();
+    fetch('/api/auth/create', {
+      method: 'POST',
+      body: JSON.stringify({ username: createUserUsername, password: createUserPassword }),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then(async (response) => {
+      if (response?.status === 200) {
+        return loginOrCreate('/api/auth/login', createUserUsername, createUserPassword);
+      } else {
+        const body = await response.json();
+        setDisplayError(`⚠ Error: ${body.msg}`);
+      }
+    });
+  };
 
   if (redirect) {
-    return <Navigate to="/quiz" />
+    return <Navigate to="/quiz" />;
   }
 
   return (
     <section>
       <h2>Login or Create an Account</h2>
+      {displayError && <p className="error">{displayError}</p>}
 
       <div>
         <form onSubmit={handleLogin}>
@@ -84,7 +120,7 @@ function Login({ username, password, setUsername, setPassword }) {
         <p>Once you log in or create an account, you will be able to take a quiz to test your anti-fraud awareness, see your scores, and learn more about how to avoid scams.</p>
       </section>
     </section>
-  )
+  );
 }
 
-export default Login
+export default Login;
