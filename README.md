@@ -99,4 +99,17 @@ Information Content: Provides background on why websites are created and the imp
 
 # MY Service START UP WROK DESCRIPTION
 1. create a vite.config.js make my server proxy API calls to my backend running on port 4000.
-2. 
+2. create Frontend served up using Express static middleware
+3. download express and uuid
+4. use command node index.js, and curl to check my end points
+5. add a login endpoint to my index.js
+6. add create account endpoint
+7. add submit score endpoint
+8. add a logout endpoint
+9. edit login page to make it call the login endpoint
+10. edit login page to make it call the create account endpoint
+11. edit about page to make it have third party api
+12. edit quiz page to make it call logout and submit scoreendpoint
+13. fix the bug i made in step 11 (I did not have a submit button when i was working on me react startup, so i chenged it back to send score after user finsh quiz, and after they finsh it will jump to score page)
+14. copied the submit current score endpoint, and make a current score function from it. change the name of submit score to score/currentscore
+15. edit score page to make it have logout and show current score function.
