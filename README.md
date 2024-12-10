@@ -96,3 +96,7 @@ Information Content: Provides background on why websites are created and the imp
 22. edit the quiz.jsx
 23. add image to website
 24. could not figure out css footer problem.
+
+# MY Service START UP WROK DESCRIPTION
+1. create a vite.config.js make my server proxy API calls to my backend running on port 4000.
+2. 
