@@ -27,3 +27,14 @@ apiRouter.post('/auth/create', (req, res) => {
     users[email] = user;
     res.send({ token: user.token });
   });
+
+apiRouter.post('/auth/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users[username];
+
+  if (!user || user.password !== password) {
+    return res.status(401).send({ msg: 'Incorrect Password' });
+  }
+  user.token = uuid.v4();
+  res.send({ token: user.token });
+});
