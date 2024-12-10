@@ -13,14 +13,17 @@ const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 apiRouter.post('/auth/create', (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).send({ msg: 'Username and password required' });
-    } //remove the simon code
-  
-    if (users[username]) {
-      return res.status(409).send({ msg: 'Existing user' });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).send({ msg: 'Email and password are required' });
     }
-    users[username] = { password, score: 0 }; //set the default score to 0
-    res.send({ msg: 'User created successfully' });
+  
+    const existingUser = users[email];
+    if (existingUser) {
+      return res.status(409).send({ msg: 'User already exists' });
+    }
+  
+    const user = { email, password, token: uuid.v4() };
+    users[email] = user;
+    res.send({ token: user.token });
   });
