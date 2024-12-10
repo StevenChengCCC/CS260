@@ -13,19 +13,15 @@ const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 apiRouter.post('/auth/create', (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).send({ msg: 'Email and password are required' });
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).send({ msg: 'Username and password required' });
     }
-  
-    const existingUser = users[email];
-    if (existingUser) {
-      return res.status(409).send({ msg: 'User already exists' });
+    if (users[username]) {
+      return res.status(409).send({ msg: 'Existing user' });
     }
-  
-    const user = { email, password, token: uuid.v4() };
-    users[email] = user;
-    res.send({ token: user.token });
+    users[username] = { password, score: 0 };
+    res.send({ msg: 'User created successfully' });
   });
 
 apiRouter.post('/auth/login', (req, res) => {
@@ -37,4 +33,12 @@ apiRouter.post('/auth/login', (req, res) => {
   }
   user.token = uuid.v4();
   res.send({ token: user.token });
+});
+
+apiRouter.delete('/auth/logout', (req, res) => {
+  const user = Object.values(users).find((u) => u.token === req.body.token);
+  if (user) {
+    delete user.token;
+  }
+  res.status(204).end();
 });
