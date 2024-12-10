@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import myImage from './logo.png'
 import '../app.css'
 
 function Login({ username, password, setUsername, setPassword }) {
