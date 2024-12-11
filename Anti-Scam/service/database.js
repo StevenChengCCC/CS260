@@ -1,1 +1,2 @@
-mongodb+srv://stevenchengcs260:<db_password>@cluster0.olg5v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+const config = require('./dbConfig.json');
+const url = "mongodb+srv://stevenchengcs260:cs260password@cluster0.olg5v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
