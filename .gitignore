@@ -13,4 +13,4 @@ npm-debug.log*
 .vscode
 
 
-./service/dbConfig.json
+/Anti-Scam/service/dbConfig.json

@@ -5,8 +5,8 @@ const config = require('dbConfig.json');
 const url = `mongodb+srv://${cs260password}:${stevenchengcs260}@${cluster0.olg5v.mongodb.net}`;
 const client = new MongoClient(url);
 const dbName = 'startup';
-let userCollection=db.collection('users');
-let scoreCollection=db.collection('scores');
+let userCollection=db.collection('username');
+let scoreCollection=db.collection('score');
 
 (async function testConnection() {
     await client.connect();
@@ -42,7 +42,7 @@ let scoreCollection=db.collection('scores');
   }
   async function deleteUser(username) {
     await userCollection.deleteOne({ username: username }); // I dont know why simon does not have this delete account function
-    await scoreCollection.deleteOne({ username: username}); // it is delete user and score
+    await scoreCollection.deleteOne({ username: username}); // it is delete user and s
   }
 
   async function addScore(score) {
