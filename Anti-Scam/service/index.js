@@ -1,15 +1,15 @@
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const express = require('express');
-const uuid = require('uuid');
 const app = express();
-
-let users = {};
-let scores = [];
+const DB = require('database.js');
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static('public'));
-
-var apiRouter = express.Router();
+app.set('trust proxy', true);
+const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 apiRouter.post('/auth/create', (req, res) => {

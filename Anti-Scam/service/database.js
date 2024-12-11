@@ -27,7 +27,7 @@ let scoreCollection=db.collection('scores');
   async function createUser(username, password) {
     const passwordHash = await bcrypt.hash(password, 10);
     const user = {
-      email: email,
+      username: username,
       password: passwordHash,
       token: uuid.v4(),
       createdAt: new Date()
@@ -36,3 +36,10 @@ let scoreCollection=db.collection('scores');
     return user;
   }
 
+
+
+  module.exports = {
+    getUser,
+    getUserByToken,
+    createUser,
+  };
