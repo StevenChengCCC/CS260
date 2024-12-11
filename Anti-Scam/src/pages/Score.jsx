@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import '../app.css';
+import { Navigate } from 'react-router-dom';
 
 function Score({ username }) {
   const [currentScore, setCurrentScore] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
 
-  // Fetch current score from DB
   useEffect(() => {
     fetch('/api/score/current', {
-      credentials: 'include' // Ensure cookies are sent
+      credentials: 'include' 
     })
       .then(res => {
         if (res.status === 401) {
@@ -20,23 +21,36 @@ function Score({ username }) {
       .then(data => {
         if (data && data.currentScore != null) {
           setCurrentScore(data.currentScore);
+        } else {
+          setCurrentScore(0);
         }
       })
       .catch(() => {
         setRedirectToLogin(true);
       });
-  }, []);
+
+    // Fetch the top 10 scores
     fetch('/api/scores', {
       method: 'GET',
       credentials: 'include',
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status === 401) {
+          setRedirectToLogin(true);
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
         setLeaderboard(data || []);
+      })
+      .catch(() => {
+        setRedirectToLogin(true);
       });
+  }, []);
 
   if (redirectToLogin) {
-    return <p>Please <a href="/">login</a> to view scores.</p>;
+    return <Navigate to="/" />;
   }
 
   function handleLogout() {
@@ -45,10 +59,12 @@ function Score({ username }) {
       credentials: 'include'
     })
     .finally(() => {
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
       setRedirectToLogin(true);
     });
   }
-
+  
   function handleDeleteAccount() {
     fetch('/api/user/delete', {
       method: 'DELETE',
@@ -56,7 +72,8 @@ function Score({ username }) {
     })
       .then(res => {
         if (res.ok) {
-          // Account deleted successfully, redirect to login
+          localStorage.removeItem('username');
+          localStorage.removeItem('token');
           setRedirectToLogin(true);
         } else {
           console.error('Failed to delete account.');
@@ -66,6 +83,7 @@ function Score({ username }) {
         console.error('Error deleting account:', err);
       });
   }
+  
   return (
     <section>
       <h2>User Scores & Leaderboard</h2>
@@ -74,7 +92,7 @@ function Score({ username }) {
       <button onClick={handleLogout}>Logout</button>
       <button onClick={handleDeleteAccount}>Delete Account</button>
 
-      <h3>Leaderboard</h3>
+      <h3>Leaderboard (Top 10)</h3>
       <ul>
         {leaderboard.map((entry, index) => (
           <li key={index}>

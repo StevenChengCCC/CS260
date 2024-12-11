@@ -2,45 +2,53 @@ import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import '../app.css';
 
-function Login({ setUsername, setPassword }) {
+  
+function Login({ setUsername, setPassword, setScore }) {
   const [localUsername, setLocalUsername] = useState('');
   const [localPassword, setLocalPassword] = useState('');
   const [createUserUsername, setCreateUserUsername] = useState('');
   const [createUserPassword, setCreateUserPassword] = useState('');
-  const [updatePasswordUsername, setUpdatePasswordUsername] = useState('');
-  const [updatePasswordNewPassword, setUpdatePasswordNewPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
   const [displayError, setDisplayError] = useState('');
   const [displaySuccess, setDisplaySuccess] = useState('');
-  
-  // activeForm can be: 'login', 'signup', or 'updatePassword'
   const [activeForm, setActiveForm] = useState('login');
 
-  async function loginOrCreate(endpoint, username, password) {
+  function loginOrCreate(endpoint, username, password) {
     setDisplayError('');
     setDisplaySuccess('');
-    const response = await fetch(endpoint, {
+
+    fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({ username, password }),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       credentials: 'include',
-    });
+    })
+    .then(response => response.json().then(body => ({ response, body })))
+    .then(({ response, body }) => {
+      if (response.ok) {
+        const token = body.token;
+        if (endpoint.includes('create')) {
+          setDisplaySuccess('🎉 User created successfully! Logging you in...');
+        }
 
-    if (response.status === 200) {
-      const data = await response.json();
-      const token = data.token;
-      localStorage.setItem('username', username);
-      localStorage.setItem('token', token);
-      setUsername(username);
-      setPassword(password);
-      setRedirect(true);
-    } else {
-      const body = await response.json();
-      setDisplayError(`⚠ Error: ${body.msg}`);
-    }
+        // Reset score after successful login or account creation
+        setUsername(username);
+        setPassword(password);
+        setScore(0); 
+        localStorage.setItem('username', username);
+        localStorage.setItem('token', token);
+        setRedirect(true);
+      } else {
+        setDisplayError(`⚠ ${body.msg}`);
+      }
+    })
+    .catch(err => {
+      setDisplayError(`⚠ Network error: ${err.message}`);
+    });
   }
+
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -58,41 +66,6 @@ function Login({ setUsername, setPassword }) {
       return;
     }
     await loginOrCreate('/api/auth/create', createUserUsername, createUserPassword);
-  }
-
-  async function handleUpdatePassword(e) {
-    e.preventDefault();
-    setDisplayError('');
-    setDisplaySuccess('');
-
-    if (!updatePasswordUsername || !updatePasswordNewPassword) {
-      setDisplayError('⚠ Please provide username and new password.');
-      return;
-    }
-
-    // For changing password, user must be logged in or we modify the endpoint to accept credentials.
-    // If the endpoint requires authentication, you may need the user to login first. 
-    // If it's open (just for demonstration), this will try to update.
-    const response = await fetch('/api/user/update', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ newPassword: updatePasswordNewPassword })
-    });
-
-    if (response.status === 200) {
-      setDisplaySuccess('✅ Password updated successfully! Please log in with your new password.');
-      // Optionally, you can clear fields or switch back to login form
-      setUpdatePasswordUsername('');
-      setUpdatePasswordNewPassword('');
-      // Switch back to login form so user can log in with new password.
-      setActiveForm('login');
-    } else {
-      const body = await response.json();
-      setDisplayError(`⚠ Error updating password: ${body.msg}`);
-    }
   }
 
   if (redirect) {
@@ -119,11 +92,6 @@ function Login({ setUsername, setPassword }) {
         {activeForm !== 'signup' && (
           <p>
             Don't have an account? <button onClick={() => setActiveForm('signup')}>Sign Up Here</button>
-          </p>
-        )}
-        {activeForm !== 'updatePassword' && (
-          <p>
-            Forgot your password? <button onClick={() => setActiveForm('updatePassword')}>Change it here</button>
           </p>
         )}
       </div>
@@ -173,32 +141,7 @@ function Login({ setUsername, setPassword }) {
           <button type="submit">Create Account</button>
         </form>
       )}
-
-      {activeForm === 'updatePassword' && (
-        <form onSubmit={handleUpdatePassword}>
-          <h3>Change Your Password</h3>
-          <p>Make sure you're logged in or have a valid session if needed.</p>
-          <label htmlFor="update-username">Username:</label>
-          <input
-            type="text"
-            id="update-username"
-            value={updatePasswordUsername}
-            onChange={(e) => setUpdatePasswordUsername(e.target.value)}
-            placeholder="Enter your username"
-          />
-          <label htmlFor="update-new-password">New Password:</label>
-          <input
-            type="password"
-            id="update-new-password"
-            value={updatePasswordNewPassword}
-            onChange={(e) => setUpdatePasswordNewPassword(e.target.value)}
-            placeholder="Enter new password"
-          />
-          <button type="submit">Update Password</button>
-        </form>
-      )}
     </section>
   );
 }
-
 export default Login;

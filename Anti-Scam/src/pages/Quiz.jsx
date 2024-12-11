@@ -5,9 +5,8 @@ import '../app.css';
 function Quiz({ username, score, setScore }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [quizDone, setQuizDone] = useState(false);
-  const [redirectToLogin, setRedirectToLogin] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  
+  const [scoreSubmitted, setScoreSubmitted] = useState(false); // new state
   const token = localStorage.getItem('token');
 
   const questions = [
@@ -28,12 +27,12 @@ function Quiz({ username, score, setScore }) {
     },
     {
       question: "What should you do when someone sends you a STEAM message, and they want you to click a link to vote for their team?",
-      options: ["accept the offer, and click the link", "Buy them a gift card.", "block them, and decline the offer"],
+      options: ["Accept the offer, and click the link", "Buy them a gift card.", "Block them, and decline the offer"],
       correct: 2
     },
     {
       question: "What should you do if someone claims that they are Shanghai entry-exit Administration Bureau, and tells you that you can't go back to your country?",
-      options: ["I don't want go back", "Be worried, and give them your credit card information.", "Hang up the phone,  because Shanghai entry-exit Administration Bureau would never call you even you are Chinese citizen."],
+      options: ["I don't want go back", "Be worried, and give them your credit card information.", "Hang up the phone, because the Shanghai entry-exit Administration Bureau would never call you, even if you are a Chinese citizen."],
       correct: 2
     },
     {
@@ -65,11 +64,18 @@ function Quiz({ username, score, setScore }) {
     if (nextQ < questions.length) {
       setCurrentQuestion(nextQ);
     } else {
+      // Quiz finished
       setQuizDone(true);
     }
   }
 
-  // Function to submit score to the database
+  // Submit score to the database once quiz is completed
+  useEffect(() => {
+    if (quizDone) {
+      submitScore();
+    }
+  }, [quizDone]);
+
   async function submitScore() {
     try {
       const response = await fetch('/api/score/currentscore', {
@@ -81,7 +87,10 @@ function Quiz({ username, score, setScore }) {
         body: JSON.stringify({ score })
       });
 
-      if (response.status !== 200) {
+      if (response.ok) {
+        // Successfully updated score in the database
+        setScoreSubmitted(true);
+      } else {
         const body = await response.json();
         setErrorMsg(`⚠ Error submitting score: ${body.msg}`);
       }
@@ -90,37 +99,28 @@ function Quiz({ username, score, setScore }) {
     }
   }
 
-  useEffect(() => {
-    if (quizDone) {
-      submitScore();
-    }
-  }, [quizDone]);
-
-  if (quizDone) {
-    return <Navigate to="/score" />;
-  }
-
   function handleLogout() {
     fetch('/api/auth/logout', {
       method: 'DELETE',
+      credentials: 'include'
     })
-      .catch(() => {})
-      .finally(() => {
-        localStorage.removeItem('username');
-        localStorage.removeItem('token');
-        setRedirectToLogin(true);
-      });
+    .finally(() => {
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+      window.location.href = '/'; 
+    });
   }
 
   function handleDeleteAccount() {
     fetch('/api/user/delete', {
       method: 'DELETE',
+      credentials: 'include'
     })
       .then((res) => {
-        if (res.status === 204) {
+        if (res.ok) {
           localStorage.removeItem('username');
           localStorage.removeItem('token');
-          setRedirectToLogin(true);
+          window.location.href = '/';
         } else {
           return res.json().then(data => {
             setErrorMsg(`⚠ Error deleting account: ${data.msg}`);
@@ -130,10 +130,11 @@ function Quiz({ username, score, setScore }) {
       .catch((err) => {
         setErrorMsg(`⚠ Error deleting account: ${err.message}`);
       });
-  }
+  }  
 
-  if (redirectToLogin) {
-    return <Navigate to="/" />;
+  // Once score is submitted, navigate to score page
+  if (scoreSubmitted) {
+    return <Navigate to="/score" />;
   }
 
   const q = questions[currentQuestion];
@@ -141,21 +142,26 @@ function Quiz({ username, score, setScore }) {
   return (
     <section id="quiz-questions">
       {errorMsg && <p className="error">{errorMsg}</p>}
-      <p>
-        Current Score: {score} 
-        <button onClick={handleLogout}>Logout</button>
-        <button onClick={handleDeleteAccount}>Delete Account</button>
-      </p> 
-      <h2>Anti-Scam Awareness Quiz</h2>
-      <p>Logged in as: {username}</p>
-      <h3>Question {currentQuestion + 1}: {q.question}</h3>
-      <ul>
-        {q.options.map((opt, idx) => (
-          <li key={idx}>
-            <button onClick={() => handleAnswer(idx)}>{opt}</button>
-          </li>
-        ))}
-      </ul>
+      {!quizDone && (
+        <>
+          <p>
+            Current Score: {score} 
+            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleDeleteAccount}>Delete Account</button>
+          </p> 
+          <h2>Anti-Scam Awareness Quiz</h2>
+          <p>Logged in as: {username}</p>
+          <h3>Question {currentQuestion + 1}: {q.question}</h3>
+          <ul>
+            {q.options.map((opt, idx) => (
+              <li key={idx}>
+                <button onClick={() => handleAnswer(idx)}>{opt}</button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {quizDone && !errorMsg && <p>Submitting your score, please wait...</p>}
     </section>
   );
 }

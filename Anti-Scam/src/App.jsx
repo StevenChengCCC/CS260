@@ -4,7 +4,6 @@ import Login from './pages/Login.jsx'
 import Quiz from './pages/Quiz.jsx'
 import Score from './pages/Score.jsx'
 import About from './pages/About.jsx'
-
 import './app.css' 
 
 function App() {
@@ -24,13 +23,13 @@ function App() {
           </ul>
         </nav>
         <h1>Anti-Scam Awareness</h1>
-      </header>// I dont know why simon does not have this delete account function
+      </header>
 
       <main>
         <Routes>
-          <Route path="/" element={<Login username={username} password={password} setUsername={setUsername} setPassword={setPassword} />} />
+          <Route path="/" element={<Login username={username} password={password} setUsername={setUsername} setPassword={setPassword} setScore={setScore} />} />
           <Route path="/quiz" element={<Quiz username={username} score={score} setScore={setScore} />} />
-          <Route path="/score" element={<Score username={username} score={score} />} />
+          <Route path="/score" element={<Score username={username} score={score} setScore={setScore} />} />
           <Route path="/about" element={<About />} />
           <Route path="/*"  element={<NotFound />} />
         </Routes>
@@ -43,6 +42,7 @@ function App() {
     </BrowserRouter>
   )
 }
+
 function NotFound() {
   return <main className='container-fluid bg-secondary text-center'>404: Return to sender. Address unknown.</main>;
 }
