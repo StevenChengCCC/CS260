@@ -36,13 +36,13 @@ function Quiz({ username, score, setScore }) {
       correct: 2
     },
     {
-      question: "when you receive a suspicious call, and just ask 'are you (your name)?'",
-      options: ["I am (your name)", "check the phone number, see if the number belongs to any institutions.", "No that is not me, my name is your favorite professor's name", "give them your SSN"],
+      question: "When you receive a suspicious call, and they just ask 'are you (your name)?'",
+      options: ["I am (your name)", "Check the phone number to see if it belongs to any institution.", "No that is not me, my name is your favorite professor's name", "Give them your SSN"],
       correct: 1
     },
     {
-      question: "what should you do when you found a website that your browser says it is high risk website?",
-      options: ["keep using it.", "click the subscribe button, and provide your bank info", "close the website immediately"],
+      question: "What should you do when you find a website that your browser says is high risk?",
+      options: ["Keep using it.", "Click the subscribe button and provide your bank info", "Close the website immediately"],
       correct: 2
     },
     {
@@ -50,25 +50,24 @@ function Quiz({ username, score, setScore }) {
       options: ["Credit Card numbers", "Date of Birth", "Social Security Number", "Passwords", "All of the above"],
       correct: 4
     }
-  ]
+  ];
 
-  // If user is did not logged in (add token to it)
   if (!username || !token) {
     return <p>Please <a href="/">login</a> first.</p>;
   }
+
   function handleAnswer(index) {
     if (index === questions[currentQuestion].correct) {
       setScore(score + 1);
     }
-    const nextQ = currentQuestion + 1; //get one points
+    const nextQ = currentQuestion + 1;
     if (nextQ < questions.length) {
-      setCurrentQuestion(nextQ); //nextquestion
+      setCurrentQuestion(nextQ);
     } else {
-      // finished quiz
       setQuizDone(true);
     }
   }
-//send score to restore in local storage
+
   async function submitScore() {
     const response = await fetch('/score/currentscore', {
       method: 'POST',
@@ -77,13 +76,12 @@ function Quiz({ username, score, setScore }) {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     });
-    if (response?.status === 200) {
-    } else {
+    if (response?.status !== 200) {
       const body = await response.json();
       setErrorMsg(`⚠ Error submitting score: ${body.msg}`);
     }
   }
-//after quiz is done take user to score page
+
   useEffect(() => {
     if (quizDone) {
       submitScore();
@@ -93,32 +91,52 @@ function Quiz({ username, score, setScore }) {
   if (quizDone) {
     return <Navigate to="/score" />;
   }
-// add a log out function
+
   function handleLogout() {
     fetch('/api/auth/logout', {
       method: 'DELETE',
     })
-      .catch(() => {
-      })
+      .catch(() => {})
       .finally(() => {
         localStorage.removeItem('username');
         localStorage.removeItem('token');
         setRedirectToLogin(true);
       });
   }
-// if login failed take back
+
+  function handleDeleteAccount() {
+    fetch('/api/user/delete', {
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (res.status === 204) {
+          localStorage.removeItem('username');
+          localStorage.removeItem('token');
+          setRedirectToLogin(true);
+        } else {
+          return res.json().then(data => {
+            setErrorMsg(`⚠ Error deleting account: ${data.msg}`);
+          });
+        }
+      })
+      .catch((err) => {
+        setErrorMsg(`⚠ Error deleting account: ${err.message}`);
+      });
+  }
+
   if (redirectToLogin) {
     return <Navigate to="/" />;
   }
 
   const q = questions[currentQuestion];
-// add a log out function
+
   return (
     <section id="quiz-questions">
       {errorMsg && <p className="error">{errorMsg}</p>}
       <p>
         Current Score: {score} 
         <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleDeleteAccount}>Delete Account</button>
       </p> 
       <h2>Anti-Scam Awareness Quiz</h2>
       <p>Logged in as: {username}</p>
@@ -134,4 +152,4 @@ function Quiz({ username, score, setScore }) {
   );
 }
 
-export default Quiz
+export default Quiz;
