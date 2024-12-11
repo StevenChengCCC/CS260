@@ -1,2 +1,9 @@
-const config = require('./dbConfig.json');
-const url = "mongodb+srv://stevenchengcs260:cs260password@cluster0.olg5v.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const { MongoClient } = require('mongodb');
+const bcrypt = require('bcrypt');
+const uuid = require('uuid');
+const config = require('dbConfig.json');
+const url = `mongodb+srv://${cs260password}:${stevenchengcs260}@${cluster0.olg5v.mongodb.net}`;
+const client = new MongoClient(url);
+const dbName = 'anti_scam';
+let userCollection=db.collection('users');
+let scoreCollection=db.collection('scores');
