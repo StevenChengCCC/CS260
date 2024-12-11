@@ -24,7 +24,7 @@ function App() {
           </ul>
         </nav>
         <h1>Anti-Scam Awareness</h1>
-      </header>
+      </header>// I dont know why simon does not have this delete account function
 
       <main>
         <Routes>

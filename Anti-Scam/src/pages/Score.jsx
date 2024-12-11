@@ -29,7 +29,7 @@ function Score({ username }) {
         setRedirectToLogin(true);
       });
   }
-
+  
   return (
     <section>
       <h2>User Scores & Leaderboard</h2>

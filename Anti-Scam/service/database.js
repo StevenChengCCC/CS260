@@ -37,9 +37,49 @@ let scoreCollection=db.collection('scores');
   }
 
 
+  async function updateUserToken(username, newToken) {
+    await userCollection.updateOne({ username: username }, { $set: { token: newToken } });
+  }
+  async function deleteUser(username) {
+    await userCollection.deleteOne({ username: username }); // I dont know why simon does not have this delete account function
+    await scoreCollection.deleteOne({ username: username}); // it is delete user and score
+  }
 
+  async function addScore(score) {
+    score.timestamp = new Date();
+    return scoreCollection.insertOne(score);
+  }
+
+  function getHighScores() {
+    const query = { score: { $gt: 0 } };
+    const options = {
+      sort: { score: -1 },
+      limit: 10,
+    };
+    return scoreCollection.find(query, options).toArray();
+  }
+  
+  async function updateScore(username, newScore) {
+    const userScore = await scoreCollection.findOne({ username: username });
+    if (!userScore) {
+      return addScore({ username, score: newScore });
+    } else {
+      if (newScore > userScore.score) {
+        await scoreCollection.updateOne({ username: username }, { $set: { score: newScore, updatedAt: new Date() } });
+      }
+    }
+    return scoreCollection.findOne({ username: username });
+  }
+  
+
+  
   module.exports = {
     getUser,
     getUserByToken,
     createUser,
+    updateUserToken,
+    deleteUser,
+    addScore,
+    getHighScores,
+    updateScore
   };
