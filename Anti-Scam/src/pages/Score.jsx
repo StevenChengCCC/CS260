@@ -26,6 +26,14 @@ function Score({ username }) {
         setRedirectToLogin(true);
       });
   }, []);
+    fetch('/api/scores', {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        setLeaderboard(data || []);
+      });
 
   if (redirectToLogin) {
     return <p>Please <a href="/">login</a> to view scores.</p>;
@@ -66,6 +74,15 @@ function Score({ username }) {
       <p>Designed for login and WebSockets</p>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={handleDeleteAccount}>Delete Account</button>
+      
+      <h3>Leaderboard</h3>
+      <ul>
+        {leaderboard.map((entry, index) => (
+          <li key={index}>
+            {entry.username}: {entry.score}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
