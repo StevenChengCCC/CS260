@@ -115,5 +115,7 @@ Information Content: Provides background on why websites are created and the imp
 15. edit score page to make it have logout and show current score function.
 
 # MY Login START UP WROK DESCRIPTION
-1. 
-2. 
+1. created dbConfig.json
+2. make database.js connect to database
+3. create a new database in DB Alta called startup, and create two conpoents for startup database.
+4. 
