@@ -58,7 +58,6 @@ function Score({ username }) {
         console.error('Error deleting account:', err);
       });
   }
-
   return (
     <section>
       <h2>User Scores & Leaderboard</h2>
