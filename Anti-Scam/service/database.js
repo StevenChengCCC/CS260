@@ -2,6 +2,7 @@ const { MongoClient } = require('mongodb');
 const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const config = require('./dbConfig.json');
+
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname};`;
 const client = new MongoClient(url);
 const db = client.db('startup');
@@ -24,15 +25,16 @@ let scoreCollection=db.collection('score');
     return userCollection.findOne({ token: token }); // use find one to read from database
   }
   
-  async function createUser(username, password) {
+  async function createUser(email, password) {
     const passwordHash = await bcrypt.hash(password, 10);
+  
     const user = {
-      username: username,
+      email: email,
       password: passwordHash,
       token: uuid.v4(),
-      createdAt: new Date()
     };
     await userCollection.insertOne(user);
+  
     return user;
   }
 
@@ -46,7 +48,6 @@ let scoreCollection=db.collection('score');
   }
 
   async function addScore(score) {
-    score.timestamp = new Date();
     return scoreCollection.insertOne(score);
   }
 
@@ -65,7 +66,7 @@ let scoreCollection=db.collection('score');
       return addScore({ username, score: newScore });
     } else {
       if (newScore > userScore.score) {
-        await scoreCollection.updateOne({ username: username }, { $set: { score: newScore, updatedAt: new Date() } });
+        await scoreCollection.updateOne({ username: username }, { $set: { score: newScore} });
       }
     }
     return scoreCollection.findOne({ username: username });
