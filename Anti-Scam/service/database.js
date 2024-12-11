@@ -1,118 +1,84 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import '../app.css';
+const { MongoClient } = require('mongodb');
+const bcrypt = require('bcrypt');
+const uuid = require('uuid');
+const config = require('./dbConfig.json');
+const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname};`;
+const client = new MongoClient(url);
+const db = client.db('startup');
+let userCollection=db.collection('username');
+let scoreCollection=db.collection('score');
 
-function Login({ setUsername, setPassword }) {
-  const [localUsername, setLocalUsername] = useState('');
-  const [localPassword, setLocalPassword] = useState('');
-  const [createUserUsername, setCreateUserUsername] = useState('');
-  const [createUserPassword, setCreateUserPassword] = useState('');
-  const [redirect, setRedirect] = useState(false);
-  const [displayError, setDisplayError] = useState('');
+(async function testConnection() {
+    await client.connect();
+    await db.command({ ping: 1 });
+  })().catch((ex) => {
+    console.log(`Unable to connect to database at ${url} because ${ex.message}`);
+    process.exit(1);
+  });
 
-  function loginOrCreate(endpoint, username, password) {
-    return fetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then(response => {
-      if (response && response.status === 200) {
-        return response.json();
-      } else {
-        return response.json().then(body => {
-          setDisplayError(`⚠ Error: ${body.msg}`);
-          throw new Error(body.msg);
-        });
+  function getUser(username) {
+    return userCollection.findOne({ username: username });// use find one to read from database
+  }
+  
+  function getUserByToken(token) {
+    return userCollection.findOne({ token: token }); // use find one to read from database
+  }
+  
+  async function createUser(username, password) {
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = {
+      username: username,
+      password: passwordHash,
+      token: uuid.v4(),
+      createdAt: new Date()
+    };
+    await userCollection.insertOne(user);
+    return user;
+  }
+
+
+  async function updateUserToken(username, newToken) {
+    await userCollection.updateOne({ username: username }, { $set: { token: newToken } });
+  }
+  async function deleteUser(username) {
+    await userCollection.deleteOne({ username: username }); // I dont know why simon does not have this delete account function
+    await scoreCollection.deleteOne({ username: username}); // it is delete user and s
+  }
+
+  async function addScore(score) {
+    score.timestamp = new Date();
+    return scoreCollection.insertOne(score);
+  }
+
+  function getHighScores() {
+    const query = { score: { $gt: 0 } };
+    const options = {
+      sort: { score: -1 },
+      limit: 10,
+    };
+    return scoreCollection.find(query, options).toArray();
+  }
+  
+  async function updateScore(username, newScore) {
+    const userScore = await scoreCollection.findOne({ username: username });
+    if (!userScore) {
+      return addScore({ username, score: newScore });
+    } else {
+      if (newScore > userScore.score) {
+        await scoreCollection.updateOne({ username: username }, { $set: { score: newScore, updatedAt: new Date() } });
       }
-    })
-    .then(data => {
-      const token = data.token;
-      if (token) {
-        localStorage.setItem('username', username);
-        localStorage.setItem('token', token);
-        setUsername(username);
-        setPassword(password);
-        setRedirect(true);
-      }
-    });
+    }
+    return scoreCollection.findOne({ username: username });
   }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    loginOrCreate('/api/auth/login', localUsername, localPassword);
-  }
-
-  function handleCreateAccount(e) {
-    e.preventDefault();
-    loginOrCreate('/api/auth/create', createUserUsername, createUserPassword);
-  }
-
-  if (redirect) {
-    return <Navigate to="/quiz" />;
-  }
-
-  return (
-    <section>
-      <h2>Login or Create an Account</h2>
-      {displayError && <p className="error">{displayError}</p>}
-
-      <div>
-        <form onSubmit={handleLogin}>
-          <h3>Login</h3>
-          <label htmlFor="username">Username:</label>
-          <input 
-            type="text" 
-            id="username" 
-            value={localUsername} 
-            onChange={(e) => setLocalUsername(e.target.value)} 
-            placeholder="Enter username"
-          />
-
-          <label htmlFor="password">Password:</label>
-          <input 
-            type="password" 
-            id="password" 
-            value={localPassword} 
-            onChange={(e) => setLocalPassword(e.target.value)} 
-            placeholder="Enter password"
-          />
-
-          <button type="submit">Login</button>
-        </form>
-
-        <form onSubmit={handleCreateAccount}>
-          <h3>Create Account</h3>
-          <label htmlFor="new-username">Username:</label>
-          <input 
-            type="text" 
-            id="new-username" 
-            value={createUserUsername} 
-            onChange={(e) => setCreateUserUsername(e.target.value)} 
-            placeholder="Enter new username"
-          />
-
-          <label htmlFor="new-password">Password:</label>
-          <input 
-            type="password" 
-            id="new-password" 
-            value={createUserPassword} 
-            onChange={(e) => setCreateUserPassword(e.target.value)} 
-            placeholder="Enter new password"
-          />
-
-          <button type="submit">Create Account</button>
-        </form>
-      </div>
-
-      <section id="welcome-section">
-        <h2>Welcome!</h2>
-        <p>Once you log in or create an account, you will be able to take a quiz to test your anti-fraud awareness, see your scores, and learn more about how to avoid scams.</p>
-      </section>
-    </section>
-  );
-}
-
-export default Login;
+  
+  
+  module.exports = {
+    getUser,
+    getUserByToken,
+    createUser,
+    updateUserToken,
+    deleteUser,
+    addScore,
+    getHighScores,
+    updateScore
+  };

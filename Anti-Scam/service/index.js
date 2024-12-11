@@ -2,13 +2,16 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const app = express();
-const DB = require('database.js');
+const DB = require('./database.js');
 const authCookieName = 'token';
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 app.use(express.json());
+
 app.use(cookieParser());
+
 app.use(express.static('public'));
+
 app.set('trust proxy', true);
 
 const apiRouter = express.Router();
@@ -50,7 +53,7 @@ apiRouter.delete('/auth/logout', (req, res) => {
 });
 
 // Get current score
-secureApiRouter.get('/score/current', async (req, res) => {
+apiRouter.get('/score/current', async (req, res) => {
   const user = req.user.username;
   const scores = await DB.getHighScores();
   const userScore = scores.find(s => s.username === user);
@@ -58,7 +61,7 @@ secureApiRouter.get('/score/current', async (req, res) => {
 });
 
 // Update user score (highest score)
-secureApiRouter.post('/score/currentscore', async (req, res) => {
+apiRouter.post('/score/currentscore', async (req, res) => {
   const { score } = req.body;
   const user = req.user.username;
   await DB.updateScore(user, score);
@@ -68,7 +71,7 @@ secureApiRouter.post('/score/currentscore', async (req, res) => {
 });
 
 // Update password function
-secureApiRouter.put('/user/update', async (req, res) => {
+apiRouter.put('/user/update', async (req, res) => {
   const { newPassword } = req.body;
   const user = req.user.username;
   if (!newPassword) {
@@ -82,14 +85,14 @@ secureApiRouter.put('/user/update', async (req, res) => {
 });
 
 // Delete user
-secureApiRouter.delete('/user/delete', async (req, res) => {
+apiRouter.delete('/user/delete', async (req, res) => {
   const user = req.user.username;
   await DB.deleteUser(user);
   res.clearCookie(authCookieName);
   res.status(204).end();
 });
 
-secureApiRouter.post('/score/add', async (req, res) => {
+apiRouter.post('/score/add', async (req, res) => {
   const { score } = req.body;
   const user = req.user.username;
   await DB.addScore({ username: user, score: score, ip: req.ip });
@@ -99,7 +102,7 @@ secureApiRouter.post('/score/add', async (req, res) => {
 
 
 // Get top scores
-secureApiRouter.get('/scores', async (req, res) => {
+apiRouter.get('/scores', async (req, res) => {
   const scores = await DB.getHighScores();
   res.send(scores);
 });
