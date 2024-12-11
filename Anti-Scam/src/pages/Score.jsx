@@ -70,11 +70,10 @@ function Score({ username }) {
     <section>
       <h2>User Scores & Leaderboard</h2>
       <p>Logged in as: {username}</p>
-      <h3>Your Final Score: {currentScore !== null ? currentScore : 'Loading...'}</h3>
-      <p>Designed for login and WebSockets</p>
+      <h3>Your Highest: {currentScore !== null ? currentScore : 'Loading...'}</h3>
       <button onClick={handleLogout}>Logout</button>
       <button onClick={handleDeleteAccount}>Delete Account</button>
-      
+
       <h3>Leaderboard</h3>
       <ul>
         {leaderboard.map((entry, index) => (

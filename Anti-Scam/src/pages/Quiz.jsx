@@ -7,8 +7,9 @@ function Quiz({ username, score, setScore }) {
   const [quizDone, setQuizDone] = useState(false);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const token = localStorage.getItem('token');
   
+  const token = localStorage.getItem('token');
+
   const questions = [
     {
       question: "Which of the following is a common sign of a phishing email?",
@@ -68,17 +69,24 @@ function Quiz({ username, score, setScore }) {
     }
   }
 
+  // Function to submit score to the database
   async function submitScore() {
-    const response = await fetch('/score/currentscore', {
-      method: 'POST',
-      body: JSON.stringify({ token, score }),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    });
-    if (response?.status !== 200) {
-      const body = await response.json();
-      setErrorMsg(`⚠ Error submitting score: ${body.msg}`);
+    try {
+      const response = await fetch('/api/score/currentscore', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: JSON.stringify({ score })
+      });
+
+      if (response.status !== 200) {
+        const body = await response.json();
+        setErrorMsg(`⚠ Error submitting score: ${body.msg}`);
+      }
+    } catch (err) {
+      setErrorMsg(`⚠ Error submitting score: ${err.message}`);
     }
   }
 
