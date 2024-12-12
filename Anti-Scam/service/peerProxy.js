@@ -1,11 +1,11 @@
-// peerProxy.js
 const { WebSocketServer } = require('ws');
 const uuid = require('uuid');
 
 function peerProxy(httpServer) {
   const wss = new WebSocketServer({ noServer: true });
+
   httpServer.on('upgrade', (request, socket, head) => {
-    if (request.url === '/ws') { // Ensure the upgrade is for the WebSocket endpoint
+    if (request.url === '/ws') {
       wss.handleUpgrade(request, socket, head, function done(ws) {
         wss.emit('connection', ws, request);
       });
@@ -15,26 +15,30 @@ function peerProxy(httpServer) {
   });
 
   let connections = [];
-
   function sendMessage(data) {
     const message = JSON.stringify(data);
     connections.forEach((c) => {
       c.ws.send(message);
     });
   }
+
   wss.on('connection', (ws) => {
     const connection = { id: uuid.v4(), alive: true, ws: ws };
     connections.push(connection);
+
     ws.on('message', function message(data) {
     });
+
     ws.on('close', () => {
       connections = connections.filter((c) => c.id !== connection.id);
     });
+
     ws.on('pong', () => {
       connection.alive = true;
     });
   });
 
+  // Keep active connections alive
   setInterval(() => {
     connections.forEach((c) => {
       if (!c.alive) {
@@ -45,6 +49,7 @@ function peerProxy(httpServer) {
       }
     });
   }, 10000);
+
   return { sendMessage };
 }
 

@@ -6,8 +6,47 @@ function Score({ username }) {
   const [currentScore, setCurrentScore] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [redirectToLogin, setRedirectToLogin] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${protocol}://${window.location.host}/ws`);
+    setSocket(ws);
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established.');
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'leaderboard') {
+        setLeaderboard(message.data);
+      } else if (message.type === 'scoreSubmitted') {
+        setNotification({
+          user: message.user,
+          score: message.score,
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchCurrentScore();
+    fetchLeaderboard();
+  }, []);
+
+  const fetchCurrentScore = () => {
     fetch('/api/score/current', {
       credentials: 'include' 
     })
@@ -28,8 +67,9 @@ function Score({ username }) {
       .catch(() => {
         setRedirectToLogin(true);
       });
+  };
 
-    // Fetch the top 10 scores
+  const fetchLeaderboard = () => {
     fetch('/api/scores', {
       method: 'GET',
       credentials: 'include',
@@ -47,7 +87,7 @@ function Score({ username }) {
       .catch(() => {
         setRedirectToLogin(true);
       });
-  }, []);
+  };
 
   if (redirectToLogin) {
     return <Navigate to="/" />;
@@ -83,7 +123,7 @@ function Score({ username }) {
         console.error('Error deleting account:', err);
       });
   }
-  
+
   return (
     <section>
       <h2>User Scores & Leaderboard</h2>
@@ -100,6 +140,12 @@ function Score({ username }) {
           </li>
         ))}
       </ul>
+
+      {notification && (
+        <div className="notification">
+          {notification.user} has submitted a new score of {notification.score}! Check the leaderboard.
+        </div>
+      )}
     </section>
   );
 }
