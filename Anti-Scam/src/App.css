@@ -179,3 +179,27 @@ footer p a {
 footer p a:hover {
     text-decoration: none;
 }
+
+.notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background-color: #2a9d8f;
+    color: #ffffff;
+    padding: 1rem 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadein 0.5s, fadeout 0.5s 4.5s;
+  }
+  
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeout {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+  
