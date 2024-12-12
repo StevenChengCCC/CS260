@@ -118,4 +118,15 @@ Information Content: Provides background on why websites are created and the imp
 1. created dbConfig.json
 2. make database.js connect to database
 3. create a new database in DB Alta called startup, and create two conpoents for startup database.
-4. 
+4. add a way to make show the database is connected, and add function to read and write in to database
+5. set the db environment for index.js make the database.js conect with index.js
+6. add function to delete user and make score read and write in to the database
+7. fix error 502
+8. edit index.js to make it work
+9. edit score page to make it storge everything in DB, and call the deleteuser function from frontend to backend
+10. edit the logout for quiz page, and add delete account in quiz page
+11. add leadboard function in to the score page
+12. login page and quiz page are edited
+13. remove the change password function - casue bug
+14. remove that in database, change the deleteaccount function
+15. fix the bug that after a user logout, and create a new account they will get what score the pervious user have
