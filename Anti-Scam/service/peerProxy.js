@@ -1,12 +1,11 @@
-// Proxy.js
+// peerProxy.js
 const { WebSocketServer } = require('ws');
 const uuid = require('uuid');
 
 function peerProxy(httpServer) {
-  
   const wss = new WebSocketServer({ noServer: true });
   httpServer.on('upgrade', (request, socket, head) => {
-    if (request.url === '/ws') {
+    if (request.url === '/ws') { // Ensure the upgrade is for the WebSocket endpoint
       wss.handleUpgrade(request, socket, head, function done(ws) {
         wss.emit('connection', ws, request);
       });
@@ -14,38 +13,30 @@ function peerProxy(httpServer) {
       socket.destroy();
     }
   });
-  
+
   let connections = [];
 
+  function sendMessage(data) {
+    const message = JSON.stringify(data);
+    connections.forEach((c) => {
+      c.ws.send(message);
+    });
+  }
   wss.on('connection', (ws) => {
     const connection = { id: uuid.v4(), alive: true, ws: ws };
     connections.push(connection);
     ws.on('message', function message(data) {
-      connections.forEach((c) => {
-        if (c.id !== connection.id) {
-          c.ws.send(data);
-        }
-      });
     });
-
-    // Remove the closed connection so we don't try to forward anymore
     ws.on('close', () => {
-      const pos = connections.findIndex((o) => o.id === connection.id);
-      if (pos >= 0) {
-        connections.splice(pos, 1);
-      }
+      connections = connections.filter((c) => c.id !== connection.id);
     });
-
-    // Respond to pong messages by marking the connection alive
     ws.on('pong', () => {
       connection.alive = true;
     });
   });
 
-  // Keep active connections alive
   setInterval(() => {
     connections.forEach((c) => {
-      // Kill any connection that didn't respond to the ping last time
       if (!c.alive) {
         c.ws.terminate();
       } else {
@@ -54,8 +45,7 @@ function peerProxy(httpServer) {
       }
     });
   }, 10000);
+  return { sendMessage };
 }
-
-
 
 module.exports = { peerProxy };
