@@ -4,7 +4,7 @@
 <span style="color: blue;">CS260 web design project</span>
 
 # Description of My website  
-  At present, many people all over the world have suffered from a large number of scams. For example, scam websites, scam phone calls, scam text messages and etc. In my project of this semester, I hope to make a fraud-proof website called "ANTI-SPAM". Through the simulation of the fraud scene to let people think about the psychology of the scammer.  
+  At present, many people all over the world have suffered from a large number of scams. For example, scam websites, scam phone calls, scam text messages and etc. In my project of this semester, I hope to make a fraud-proof website called "ANTI-SCAM". Through the simulation of the fraud scene to let people think about the psychology of the scammer.  
 # The following is my analysis of the features of the website.
   This is the homepage of my website, which includes registration and login functions. You can choose the name you like, and if you score in the top10 you will appear in the leaderboard.  
 ![IMG_0014](https://github.com/user-attachments/assets/ced00ba1-e8c6-40fb-bc5b-1b289b70d433)  
@@ -22,7 +22,7 @@
   **Service** - chatWithFriend and saveScores also provide users with access to the data they have recorded in leaderboards.  
   **DB/Login** - DB/Login is used to handle logins and Signup.  
   **WebSocket** - Websockets is used to record user data and leaderboards.  
-
+# Dear TAs, If you clone this to your computer, and use node index.js and npm dev run it will work.
 # MY HTML START UP WROK DESCRIPTION setps
 1. add a file named index.html 
 2. create a header a title on top. create space for the login in and sign up function. have some plain text for the front page
@@ -130,3 +130,17 @@ Information Content: Provides background on why websites are created and the imp
 13. remove the change password function - casue bug
 14. remove that in database, change the deleteaccount function
 15. fix the bug that after a user logout, and create a new account they will get what score the pervious user have
+
+# MY Websocker START UP WROK DESCRIPTION
+1. set the environment for websocket to oprate
+2. create peerProxy function frame
+3. create connection to store information with a WS user connected
+4. after the connection send user data baout the leadboard
+5. create message to send the score to all the user connected
+6. when user close the webstie delete them form connection list
+7. use Ping/Pong to check if user is still using the connection or not
+8. create state variable to track the current score and leaderboard data and login status
+9. Fetching Initial Data
+10. make the front end connect to WebSocket.
+11. If you clone this to your computer, and use node index.js and npm dev run it will work.
+

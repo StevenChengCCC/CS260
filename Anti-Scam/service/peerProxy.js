@@ -1,6 +1,6 @@
 const { WebSocketServer } = require('ws');
 const uuid = require('uuid');
-const DB = require('./database.js'); // Add this line to access DB
+const DB = require('./database.js');
 
 function peerProxy(httpServer) {
   // Create a websocket object
@@ -18,8 +18,6 @@ function peerProxy(httpServer) {
   wss.on('connection', async (ws) => {
     const connection = { id: uuid.v4(), alive: true, ws: ws };
     connections.push(connection);
-
-    // On new connection, send the current leaderboard
     const scores = await DB.getHighScores();
     const scoreboardMessage = JSON.stringify({ type: 'scoreboard', scores });
     ws.send(scoreboardMessage);
