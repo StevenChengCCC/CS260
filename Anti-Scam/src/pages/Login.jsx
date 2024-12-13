@@ -16,39 +16,39 @@ function Login({ setUsername, setPassword, setScore }) {
   function loginOrCreate(endpoint, username, password) {
     setDisplayError('');
     setDisplaySuccess('');
-
+  
     fetch(endpoint, {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8'
       },
       credentials: 'include',
+      body: JSON.stringify({ username, password })
     })
-    .then(response => response.json().then(body => ({ response, body })))
-    .then(({ response, body }) => {
-      if (response.ok) {
-        const token = body.token;
-        if (endpoint.includes('create')) {
-          setDisplaySuccess('🎉 User created successfully! Logging you in...');
-        }
-
-        // Reset score after successful login or account creation
-        setUsername(username);
-        setPassword(password);
-        setScore(0); 
-        localStorage.setItem('username', username);
-        localStorage.setItem('token', token);
-        setRedirect(true);
-      } else {
-        setDisplayError(`⚠ ${body.msg}`);
+    .then(async response => {
+      const body = await response.json();
+      if (!response.ok) {
+        throw new Error(body.msg || 'An unknown error occurred');
       }
+      return body;
+    })
+    .then(body => {
+      const token = body.token;
+      if (endpoint.includes('create')) {
+        setDisplaySuccess('🎉 User created successfully! Logging you in...');
+      }
+      setUsername(username);
+      setPassword(password);
+      setScore(0); 
+      localStorage.setItem('username', username);
+      localStorage.setItem('token', token);
+      setRedirect(true);
     })
     .catch(err => {
-      setDisplayError(`⚠ Network error: ${err.message}`);
+      setDisplayError(`⚠ ${err.message}`);
     });
   }
-
+  
 
   async function handleLogin(e) {
     e.preventDefault();
