@@ -29,7 +29,6 @@ function Score({ username }) {
         setRedirectToLogin(true);
       });
 
-    // Fetch initial leaderboard via HTTP (optional, since WS will update it too)
     fetch('/api/scores', {
       method: 'GET',
       credentials: 'include',
@@ -48,29 +47,6 @@ function Score({ username }) {
         setRedirectToLogin(true);
       });
   }, []);
-
-  // --- New WebSocket Logic ---
-  useEffect(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(protocol + '//' + window.location.host + '/ws');
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'scoreboard') {
-        setLeaderboard(data.scores);
-      }
-    };
-
-    // Optional: request scoreboard update when connected
-    ws.onopen = () => {
-      ws.send('update');
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-  // --- End of new WebSocket Logic ---
 
   if (redirectToLogin) {
     return <Navigate to="/" />;
