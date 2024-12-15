@@ -10,7 +10,13 @@ const userCollection = db.collection('username');
 const scoreCollection = db.collection('score');
 
 (async function testConnection() {
-  await client.connect();
+  const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    tls: true,
+    rejectUnauthorized: false,
+  };
+  await client.connect(options);
   await db.command({ ping: 1 });
 })().catch((ex) => {
   console.log(`Unable to connect to database with ${url} because ${ex.message}`);
