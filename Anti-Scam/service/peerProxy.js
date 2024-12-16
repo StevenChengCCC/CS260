@@ -3,10 +3,7 @@ const uuid = require('uuid');
 const DB = require('./database.js');
 
 function peerProxy(httpServer) {
-  // Create a websocket object
   const wss = new WebSocketServer({ noServer: true });
-
-  // Handle the protocol upgrade from HTTP to WebSocket
   httpServer.on('upgrade', (request, socket, head) => {
     wss.handleUpgrade(request, socket, head, function done(ws) {
       wss.emit('connection', ws, request);
@@ -15,23 +12,12 @@ function peerProxy(httpServer) {
 
   let connections = [];
 
-  wss.on('connection', async (ws) => {
-    const connection = { id: uuid.v4(), alive: true, ws: ws };
+  wss.on('connection',function connection (ws) {
+    const connection = { id: uuid.v4(), alive: true, ws: ws,username: null };
     connections.push(connection);
-    const scores = await DB.getHighScores();
-    const scoreboardMessage = JSON.stringify({ type: 'scoreboard', scores });
-    ws.send(scoreboardMessage);
 
-    // When a message is received, re-broadcast the updated leaderboard
-    ws.on('message', async function message(data) {
-      // On any received message, fetch and broadcast the latest scores
-      const scores = await DB.getHighScores();
-      const scoreboardMessage = JSON.stringify({ type: 'scoreboard', scores });
-      connections.forEach((c) => {
-        c.ws.send(scoreboardMessage);
-      });
-    });
-
+    
+  
     ws.on('close', () => {
       const pos = connections.findIndex((o) => o.id === connection.id);
       if (pos >= 0) {
@@ -42,9 +28,22 @@ function peerProxy(httpServer) {
     ws.on('pong', () => {
       connection.alive = true;
     });
-  });
 
-  // Ping each connection every 10 seconds to ensure they are alive
+    ws.on('message',  (messages)=>{
+      const scores = DB.getHighScores();
+      // console.log(scores);
+      const scoreboardMessage = JSON.stringify({ type: 'scoreboard', scores });
+      const receivedMsg = JSON.parse(messages);
+      if (receivedMsg.type === 'user_login') {
+        // console.log(receivedMsg);
+        const username = receivedMsg.username;
+        connection.username = username;
+      }
+      ws.send(scoreboardMessage);
+      broadcastUserStatus(connection,scores);
+    });
+
+  });
   setInterval(() => {
     connections.forEach((c) => {
       if (!c.alive) {
@@ -55,6 +54,18 @@ function peerProxy(httpServer) {
       }
     });
   }, 10000);
+  function broadcastUserStatus(newConnection, username) {
+    // console.log(newConnection);
+    const message = JSON.stringify({
+      type: 'user_status',
+      username: newConnection.username
+    });
+    connections.forEach((c) => {
+      if (c.id !== newConnection.id) {
+        c.ws.send(message);
+      }
+    });
+  }
 }
 
 module.exports = { peerProxy };

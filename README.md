@@ -142,5 +142,5 @@ Information Content: Provides background on why websites are created and the imp
 8. create state variable to track the current score and leaderboard data and login status
 9. Fetching Initial Data
 10. make the front end connect to WebSocket.
-11. If you clone this to your computer, and use node index.js and npm dev run it will work.
-
+11. my front end might cause trouble, so make score.jsx bact to it used to be
+12. If you clone this to your computer, and use node index.js and npm dev run it will work.

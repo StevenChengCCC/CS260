@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('public'));
 app.set('trust proxy', true);
+const { peerProxy } = require('./peerProxy.js');
 
 // Middleware to identify user from token cookie
 app.use(async (req, res, next) => {
@@ -126,6 +127,8 @@ function setAuthCookie(res, authToken) {
   });
 }
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+peerProxy(server);
