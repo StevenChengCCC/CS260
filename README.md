@@ -22,7 +22,7 @@
   **Service** - chatWithFriend and saveScores also provide users with access to the data they have recorded in leaderboards.  
   **DB/Login** - DB/Login is used to handle logins and Signup.  
   **WebSocket** - Websockets is used to record user data and leaderboards.  
-# Dear TAs, If you clone this to your computer, and use node index.js and npm dev run it will work.
+  
 # MY HTML START UP WROK DESCRIPTION setps
 1. add a file named index.html 
 2. create a header a title on top. create space for the login in and sign up function. have some plain text for the front page
@@ -143,4 +143,4 @@ Information Content: Provides background on why websites are created and the imp
 9. Fetching Initial Data
 10. make the front end connect to WebSocket.
 11. my front end might cause trouble, so make score.jsx bact to it used to be
-12. If you clone this to your computer, and use node index.js and npm dev run it will work.
+12. My mangoDB blocked my domain name for no reason, and I fixed it.
